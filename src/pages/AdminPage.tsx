@@ -7,8 +7,8 @@ type AdminTab = 'overview' | 'inventory' | 'orders';
 
 const stockConfig = {
   in_stock: { label: 'In Stock', bg: 'bg-success-bg', text: 'text-success' },
-  low_stock: { label: 'Low Stock', bg: 'bg-warning-bg', text: 'text-warning' },
-  out_of_stock: { label: 'Out of Stock', bg: 'bg-error-bg', text: 'text-error' },
+  low_stock: { label: 'Stok Menipis', bg: 'bg-warning-bg', text: 'text-warning' },
+  out_of_stock: { label: 'Kehabisan Stok', bg: 'bg-error-bg', text: 'text-error' },
 };
 
 function KpiCard({ label, value, sub, icon, trend }: { label: string; value: string; sub?: string; icon: string; trend?: 'up' | 'down' }) {
@@ -104,7 +104,7 @@ export default function AdminPage() {
           <div className="space-y-6 animate-fade-up">
             {/* KPI row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <KpiCard label="Total Revenue" value="$2.47M" sub="↑ 18.4% this quarter" icon="💰" trend="up" />
+              <KpiCard label="Total Pendapatan" value="$2.47M" sub="↑ 18.4% this quarter" icon="💰" trend="up" />
               <KpiCard label="Active Listings" value={`${inventory.length - outOfStockCount}`} sub={`${outOfStockCount} out of stock`} icon="🏪" />
               <KpiCard label="Monthly Orders" value="847" sub="↑ 12% vs last month" icon="📦" trend="up" />
               <KpiCard label="Inventory Value" value={formatPrice(totalValue)} sub={`${inventory.length} SKUs tracked`} icon="🏗️" />
@@ -115,7 +115,7 @@ export default function AdminPage() {
               <div className="bg-warning-bg border border-warning/20 rounded-2xl p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-warning"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
-                  <h3 className="font-semibold text-foreground text-sm">Low Stock Alerts ({lowStockProducts.length})</h3>
+                  <h3 className="font-semibold text-foreground text-sm">Stok Menipis Alerts ({lowStockProducts.length})</h3>
                 </div>
                 <div className="space-y-2">
                   {lowStockProducts.map(p => {
@@ -140,7 +140,7 @@ export default function AdminPage() {
             {/* Recent orders preview */}
             <div className="bg-card border border-border rounded-2xl overflow-hidden">
               <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-                <h3 className="font-display font-semibold text-base text-foreground">Recent Orders</h3>
+                <h3 className="font-display font-semibold text-base text-foreground">Pesanan Terbaru</h3>
                 <button onClick={() => setActiveTab('orders')} className="text-xs text-primary font-medium hover:underline">View all →</button>
               </div>
               <div className="overflow-x-auto">
@@ -161,7 +161,7 @@ export default function AdminPage() {
                           <td className="px-4 py-3 font-mono text-xs font-medium text-foreground">{order.orderId}</td>
                           <td className="px-4 py-3 text-sm text-foreground">{order.shippingAddress.fullName}</td>
                           <td className="px-4 py-3 text-sm text-muted-foreground">{order.items.length}</td>
-                          <td className="px-4 py-3 font-mono text-sm font-semibold">{formatPrice(order.totalAmount)}</td>
+                          <td className="px-4 py-3 font-mono text-sm font-semibold">{formatPrice(order.totalJumlah)}</td>
                           <td className="px-4 py-3">
                             <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full ${badge} capitalize`}>
                               {s.replace('_', ' ')}
@@ -356,7 +356,7 @@ export default function AdminPage() {
                 <table className="w-full text-sm">
                   <thead className="bg-muted/50">
                     <tr>
-                      {['Order ID', 'Date', 'Customer', 'Items', 'Total', 'Status', 'Actions'].map(h => (
+                      {['Order ID', 'Tanggal', 'Pelanggan', 'Items', 'Total', 'Status', 'Actions'].map(h => (
                         <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">{h}</th>
                       ))}
                     </tr>
@@ -368,10 +368,10 @@ export default function AdminPage() {
                       return (
                         <tr key={order.orderId} className="border-t border-border hover:bg-muted/30 transition-colors">
                           <td className="px-4 py-3 font-mono text-xs font-medium text-foreground">{order.orderId}</td>
-                          <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{new Date(order.orderDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+                          <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{new Tanggal(order.orderTanggal).toLocaleTanggalString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
                           <td className="px-4 py-3 font-medium text-foreground whitespace-nowrap">{order.shippingAddress.fullName}</td>
                           <td className="px-4 py-3 text-muted-foreground">{order.items.length}</td>
-                          <td className="px-4 py-3 font-mono font-semibold">{formatPrice(order.totalAmount)}</td>
+                          <td className="px-4 py-3 font-mono font-semibold">{formatPrice(order.totalJumlah)}</td>
                           <td className="px-4 py-3">
                             <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full whitespace-nowrap ${badge} capitalize`}>
                               {s.replace('_', ' ')}

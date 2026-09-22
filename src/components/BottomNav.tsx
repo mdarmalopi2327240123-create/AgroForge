@@ -9,7 +9,7 @@ interface BottomNavProps {
 const navItems = [
   {
     page: 'marketplace' as Page,
-    label: 'Market',
+    label: 'Pasar',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -19,7 +19,7 @@ const navItems = [
   },
   {
     page: 'orders' as Page,
-    label: 'Orders',
+    label: 'Pesanan',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M9 11l3 3L22 4" />
@@ -49,7 +49,7 @@ export default function BottomNav({ currentPage, onNavigate, cartCount }: Bottom
         );
       })}
 
-      {/* Cart */}
+      {/* Keranjang */}
       <button
         onClick={() => {}}
         className="flex flex-col items-center gap-0.5 px-5 py-1.5 rounded-xl text-muted-foreground relative transition-all duration-200"
@@ -65,7 +65,7 @@ export default function BottomNav({ currentPage, onNavigate, cartCount }: Bottom
             </span>
           )}
         </span>
-        <span className="text-[10px] font-medium">Cart</span>
+        <span className="text-[10px] font-medium">Keranjang</span>
       </button>
     </nav>
   );

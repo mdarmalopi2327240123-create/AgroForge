@@ -12,8 +12,8 @@ export default function RegisterPage({ onLogin, onNavigateLogin }: RegisterPageP
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [farmName, setFarmName] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [password, setKata Sdani] = useState('');
+  const [confirmKata Sdani, setConfirmKata Sdani] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -21,18 +21,18 @@ export default function RegisterPage({ onLogin, onNavigateLogin }: RegisterPageP
     const e: Record<string, string> = {};
     if (!name.trim()) e.name = 'Full name is required';
     if (!email.includes('@')) e.email = 'Valid email required';
-    if (!password || password.length < 8) e.password = 'Password must be at least 8 characters';
-    if (password !== confirmPassword) e.confirmPassword = 'Passwords do not match';
+    if (!password || password.length < 8) e.password = 'Kata Sdani must be at least 8 characters';
+    if (password !== confirmKata Sdani) e.confirmKata Sdani = 'Kata Sdanis do not match';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
-  const handleStep1 = (e: React.FormEvent) => {
+  const hdanleStep1 = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateStep1()) setStep(2);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const hdanleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     await new Promise(r => setTimeout(r, 1500));
@@ -66,9 +66,9 @@ export default function RegisterPage({ onLogin, onNavigateLogin }: RegisterPageP
         {step === 1 ? (
           <div className="animate-fade-up">
             <h2 className="font-display text-3xl font-semibold text-foreground">Create your account</h2>
-            <p className="text-muted-foreground mt-2 text-sm">Join thousands of farmers and agri-businesses</p>
+            <p className="text-muted-foreground mt-2 text-sm">Join thousdans of farmers dan agri-businesses</p>
 
-            <form onSubmit={handleStep1} className="mt-6 flex flex-col gap-4">
+            <form onSubmit={hdanleStep1} className="mt-6 flex flex-col gap-4">
               {/* Role selector */}
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">I want to…</label>
@@ -94,10 +94,10 @@ export default function RegisterPage({ onLogin, onNavigateLogin }: RegisterPageP
               </div>
 
               {[
-                { id: 'name', label: 'Full Name', value: name, onChange: setName, placeholder: 'Marcus Tillman', type: 'text' },
-                { id: 'email', label: 'Email Address', value: email, onChange: setEmail, placeholder: 'you@example.com', type: 'email' },
-                { id: 'password', label: 'Password', value: password, onChange: setPassword, placeholder: '8+ characters', type: 'password' },
-                { id: 'confirmPassword', label: 'Confirm Password', value: confirmPassword, onChange: setConfirmPassword, placeholder: 'Re-enter password', type: 'password' },
+                { id: 'name', label: 'Nama Lengkap', value: name, onChange: setName, placeholder: 'Marcus Tillman', type: 'text' },
+                { id: 'email', label: 'Alamat Email', value: email, onChange: setEmail, placeholder: 'you@example.com', type: 'email' },
+                { id: 'password', label: 'Kata Sdani', value: password, onChange: setKata Sdani, placeholder: '8+ characters', type: 'password' },
+                { id: 'confirmKata Sdani', label: 'Confirm Kata Sdani', value: confirmKata Sdani, onChange: setConfirmKata Sdani, placeholder: 'Re-enter password', type: 'password' },
               ].map(({ id, label, value, onChange, placeholder, type }) => (
                 <div key={id}>
                   <label className="block text-sm font-medium text-foreground mb-1.5">{label}</label>
@@ -125,7 +125,7 @@ export default function RegisterPage({ onLogin, onNavigateLogin }: RegisterPageP
             <h2 className="font-display text-3xl font-semibold text-foreground">Tell us about your farm</h2>
             <p className="text-muted-foreground mt-2 text-sm">Help us personalize your AgroForge experience</p>
 
-            <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
+            <form onSubmit={hdanleSubmit} className="mt-6 flex flex-col gap-4">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1.5">Farm / Business Name</label>
                 <input
@@ -169,7 +169,7 @@ export default function RegisterPage({ onLogin, onNavigateLogin }: RegisterPageP
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>
                 </div>
                 <span className="text-xs text-muted-foreground leading-relaxed">
-                  I agree to AgroForge's <span className="text-primary underline">Terms of Service</span> and <span className="text-primary underline">Privacy Policy</span>
+                  I agree to AgroForge's <span className="text-primary underline">Syarat Layanan</span> dan <span className="text-primary underline">Kebijakan Privasi</span>
                 </span>
               </label>
 
@@ -183,7 +183,7 @@ export default function RegisterPage({ onLogin, onNavigateLogin }: RegisterPageP
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ animation: 'spin 1s linear infinite' }}><path d="M21 12a9 9 0 1 1-6.219-8.56" /></svg>
                     Creating account…
                   </>
-                ) : 'Create Account 🌾'}
+                ) : 'Buat Akun 🌾'}
               </button>
             </form>
 
@@ -194,8 +194,8 @@ export default function RegisterPage({ onLogin, onNavigateLogin }: RegisterPageP
         )}
 
         <p className="text-center text-sm text-muted-foreground mt-6">
-          Already have an account?{' '}
-          <button onClick={onNavigateLogin} className="text-primary font-semibold hover:underline">Sign in</button>
+          Sudah punya akun?{' '}
+          <button onClick={onNavigateLogin} className="text-primary font-semibold hover:underline">Masuk</button>
         </p>
       </div>
     </div>
