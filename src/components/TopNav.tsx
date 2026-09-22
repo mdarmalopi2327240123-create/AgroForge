@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Page, User } from '../types';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface TopNavProps {
   user: User;
@@ -15,8 +16,9 @@ export default function TopNav({ user, cartCount, onCartClick, onNavigate, curre
   const [searchValue, setSearchValue] = useState('');
 
   const navLinks: { label: string; page: Page }[] = user.role === 'admin'
-    ? [{ label: 'Dashboard', page: 'admin' }, { label: 'Marketplace', page: 'marketplace' }]
-    : [{ label: 'Marketplace', page: 'marketplace' }, { label: 'My Orders', page: 'orders' }];
+    ? [{ label: 'Dasbor', page: 'admin' }, { label: 'Pasar', page: 'marketplace' }]
+    : [{ label: 'Pasar', page: 'marketplace' }, { label: 'Pesanan Saya', page: 'orders' }];
+
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-card border-b border-border h-16 flex items-center px-4 lg:px-6 gap-4 shadow-sm">
@@ -64,7 +66,7 @@ export default function TopNav({ user, cartCount, onCartClick, onNavigate, curre
             type="text"
             value={searchValue}
             onChange={e => setSearchValue(e.target.value)}
-            placeholder="Search machinery, tools, equipment…"
+            placeholder="Cari mesin, alat, perlengkapan…"
             className="w-full pl-9 pr-4 py-2 bg-muted border border-border rounded-lg text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
           />
         </div>
@@ -75,7 +77,7 @@ export default function TopNav({ user, cartCount, onCartClick, onNavigate, curre
         <button
           onClick={onCartClick}
           className="relative p-2 rounded-lg hover:bg-muted transition-colors text-foreground"
-          aria-label="Open cart"
+          aria-label="Buka keranjang"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
@@ -103,8 +105,15 @@ export default function TopNav({ user, cartCount, onCartClick, onNavigate, curre
             </svg>
           </button>
 
+          <AnimatePresence>
           {isUserMenuOpen && (
-            <div className="absolute right-0 top-full mt-2 w-52 bg-card border border-border rounded-xl shadow-lg py-1 z-50 animate-fade-in">
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="absolute right-0 top-full mt-2 w-52 bg-card border border-border rounded-xl shadow-lg py-1 z-50"
+            >
               <div className="px-3 py-2 border-b border-border">
                 <p className="text-sm font-semibold text-foreground">{user.name}</p>
                 <p className="text-xs text-muted-foreground">{user.email}</p>
@@ -115,23 +124,24 @@ export default function TopNav({ user, cartCount, onCartClick, onNavigate, curre
               {user.role === 'buyer' && (
                 <button onClick={() => { onNavigate('orders'); setIsUserMenuOpen(false); }} className="w-full text-left px-3 py-2 text-sm hover:bg-muted transition-colors flex items-center gap-2">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" /></svg>
-                  My Orders
+                  Pesanan Saya
                 </button>
               )}
               {user.role === 'admin' && (
                 <button onClick={() => { onNavigate('admin'); setIsUserMenuOpen(false); }} className="w-full text-left px-3 py-2 text-sm hover:bg-muted transition-colors flex items-center gap-2">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>
-                  Admin Dashboard
+                  Dasbor Admin
                 </button>
               )}
               <div className="border-t border-border mt-1">
                 <button onClick={() => { onLogout(); setIsUserMenuOpen(false); }} className="w-full text-left px-3 py-2 text-sm text-error hover:bg-error-bg/30 transition-colors flex items-center gap-2">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
-                  Sign Out
+                  Keluar
                 </button>
               </div>
-            </div>
+            </motion.div>
           )}
+          </AnimatePresence>
         </div>
       </div>
     </nav>

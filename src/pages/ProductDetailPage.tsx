@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Product } from '../types';
 
 interface ProductDetailPageProps {
@@ -8,9 +9,9 @@ interface ProductDetailPageProps {
 }
 
 const stockConfig = {
-  in_stock: { label: 'In Stock', dot: 'bg-success', text: 'text-success', bg: 'bg-success-bg' },
-  low_stock: { label: 'Low Stock', dot: 'bg-warning', text: 'text-warning', bg: 'bg-warning-bg' },
-  out_of_stock: { label: 'Out of Stock', dot: 'bg-muted-foreground', text: 'text-muted-foreground', bg: 'bg-muted' },
+  in_stock: { label: 'Stok Tersedia', dot: 'bg-success', text: 'text-success', bg: 'bg-success-bg' },
+  low_stock: { label: 'Stok Menipis', dot: 'bg-warning', text: 'text-warning', bg: 'bg-warning-bg' },
+  out_of_stock: { label: 'Stok Habis', dot: 'bg-muted-foreground', text: 'text-muted-foreground', bg: 'bg-muted' },
 };
 
 function StarRating({ rating, reviewCount }: { rating: number; reviewCount: number }) {
@@ -23,14 +24,14 @@ function StarRating({ rating, reviewCount }: { rating: number; reviewCount: numb
           </svg>
         ))}
       </div>
-      <span className="font-mono text-sm text-muted-foreground">{rating} out of 5 ({reviewCount} reviews)</span>
+      <span className="font-mono text-sm text-muted-foreground">{rating} dari 5 ({reviewCount} ulasan)</span>
     </div>
   );
 }
 
 export default function ProductDetailPage({ product, onAddToCart, onBack }: ProductDetailPageProps) {
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState<'specs' | 'shipping' | 'warranty'>('specs');
+  const [activeTab, setActiveTab] = useState<'spesifikasi' | 'pengiriman' | 'garansi'>('spesifikasi');
   const [addedFeedback, setAddedFeedback] = useState(false);
 
   const { productTitle, productDescription, itemPrice, originalPrice, brand, stockStatus, rating, reviewCount, imageUrl, specs, tags, sku } = product;
@@ -45,34 +46,56 @@ export default function ProductDetailPage({ product, onAddToCart, onBack }: Prod
     setTimeout(() => setAddedFeedback(false), 2500);
   };
 
-  const formatPrice = (n: number) => `$${n.toLocaleString()}`;
+  const formatPrice = (n: number) => `Rp${n.toLocaleString('id-ID')}`;
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
 
   return (
-    <div className="min-h-screen bg-background">
+    <motion.div 
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="min-h-screen bg-background"
+    >
       <div className="max-w-screen-xl mx-auto px-4 lg:px-8 py-6">
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6 animate-fade-in">
+        <motion.div variants={itemVariants} className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
           <button onClick={onBack} className="hover:text-primary transition-colors flex items-center gap-1.5 font-medium">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
-            Marketplace
+            Pasar
           </button>
           <span>/</span>
           <span className="text-muted-foreground">{product.category}</span>
           <span>/</span>
           <span className="text-foreground font-medium line-clamp-1 max-w-xs">{productTitle}</span>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 animate-fade-up">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Image */}
-          <div className="space-y-4">
-            <div className="aspect-[4/3] bg-muted rounded-2xl overflow-hidden relative">
+          <motion.div variants={itemVariants} className="space-y-4">
+            <motion.div 
+              whileHover={{ scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="aspect-[4/3] bg-muted rounded-2xl overflow-hidden relative"
+            >
               <img src={imageUrl} alt={productTitle} className="w-full h-full object-cover" />
               {discount && (
                 <span className="absolute top-4 left-4 bg-primary text-primary-foreground text-sm font-bold px-3 py-1 rounded-full">
                   −{discount}%
                 </span>
               )}
-            </div>
+            </motion.div>
             {/* Thumbnail row */}
             <div className="flex gap-3">
               {[imageUrl].map((src, i) => (
@@ -81,10 +104,10 @@ export default function ProductDetailPage({ product, onAddToCart, onBack }: Prod
                 </button>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Info */}
-          <div className="flex flex-col gap-5">
+          <motion.div variants={itemVariants} className="flex flex-col gap-5">
             <div>
               <div className="flex items-center gap-3 flex-wrap">
                 <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider bg-muted px-2.5 py-1 rounded-full">{brand}</span>
@@ -103,7 +126,7 @@ export default function ProductDetailPage({ product, onAddToCart, onBack }: Prod
               <span className={`w-2 h-2 rounded-full ${stock.dot}`} style={stockStatus === 'in_stock' ? { boxShadow: '0 0 6px #16A34A' } : {}} />
               <span className={`text-sm font-semibold ${stock.text}`}>{stock.label}</span>
               {product.stockQuantity > 0 && product.stockQuantity <= 5 && (
-                <span className="text-xs text-muted-foreground">— only {product.stockQuantity} left</span>
+                <span className="text-xs text-muted-foreground">— sisa {product.stockQuantity}</span>
               )}
             </div>
 
@@ -114,7 +137,7 @@ export default function ProductDetailPage({ product, onAddToCart, onBack }: Prod
                 <span className="font-mono text-lg text-muted-foreground line-through">{formatPrice(originalPrice)}</span>
               )}
               {discount && (
-                <span className="text-sm font-semibold text-success">Save {formatPrice(originalPrice! - itemPrice)}</span>
+                <span className="text-sm font-semibold text-success">Hemat {formatPrice(originalPrice! - itemPrice)}</span>
               )}
             </div>
 
@@ -138,7 +161,8 @@ export default function ProductDetailPage({ product, onAddToCart, onBack }: Prod
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                 </button>
               </div>
-              <button
+              <motion.button
+                whileTap={isDisabled ? {} : { scale: 0.95 }}
                 onClick={handleAddToCart}
                 disabled={isDisabled}
                 className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all ${
@@ -146,29 +170,43 @@ export default function ProductDetailPage({ product, onAddToCart, onBack }: Prod
                     ? 'bg-success text-white'
                     : isDisabled
                     ? 'bg-muted text-muted-foreground cursor-not-allowed'
-                    : 'bg-accent hover:bg-accent/90 text-white hover:shadow-lg active:scale-[0.98]'
+                    : 'bg-accent hover:bg-accent/90 text-white hover:shadow-lg'
                 }`}
               >
-                {addedFeedback ? (
-                  <>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg>
-                    Added to Cart!
-                  </>
-                ) : (
-                  <>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" /><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" /></svg>
-                    {isDisabled ? 'Currently Unavailable' : `Add ${quantity > 1 ? `${quantity} ×` : ''} to Cart`}
-                  </>
-                )}
-              </button>
+                <AnimatePresence mode="wait">
+                  {addedFeedback ? (
+                    <motion.div
+                      key="added"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="flex items-center gap-2"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg>
+                      Ditambahkan ke Keranjang!
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="add"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="flex items-center gap-2"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" /><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" /></svg>
+                      {isDisabled ? 'Saat Ini Tidak Tersedia' : `Tambah ${quantity > 1 ? `${quantity} ×` : ''} ke Keranjang`}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.button>
             </div>
 
             {/* Trust badges */}
             <div className="grid grid-cols-3 gap-3 py-4 border-t border-b border-border">
               {[
-                { icon: '🛡️', label: 'Verified Supplier' },
-                { icon: '🚚', label: 'Free Freight' },
-                { icon: '↩️', label: '30-Day Returns' },
+                { icon: '🛡️', label: 'Pemasok Terverifikasi' },
+                { icon: '🚚', label: 'Gratis Ongkir' },
+                { icon: '↩️', label: 'Pengembalian 30 Hari' },
               ].map(({ icon, label }) => (
                 <div key={label} className="flex flex-col items-center gap-1 text-center">
                   <span className="text-xl">{icon}</span>
@@ -180,7 +218,7 @@ export default function ProductDetailPage({ product, onAddToCart, onBack }: Prod
             {/* Tabs */}
             <div>
               <div className="flex border-b border-border">
-                {(['specs', 'shipping', 'warranty'] as const).map(tab => (
+                {(['spesifikasi', 'pengiriman', 'garansi'] as const).map(tab => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
@@ -196,57 +234,70 @@ export default function ProductDetailPage({ product, onAddToCart, onBack }: Prod
               </div>
 
               <div className="pt-4">
-                {activeTab === 'specs' && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {activeTab === 'spesifikasi' && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-2"
+                  >
                     {Object.entries(specs).map(([key, value]) => (
                       <div key={key} className="flex items-start gap-2 bg-muted/50 rounded-lg px-3 py-2.5">
                         <span className="text-xs font-semibold text-muted-foreground shrink-0 min-w-[90px]">{key}</span>
-                        <span className="text-xs text-foreground font-medium">{value}</span>
+                        <span className="text-xs text-foreground font-medium">{value as React.ReactNode}</span>
                       </div>
                     ))}
-                  </div>
+                  </motion.div>
                 )}
-                {activeTab === 'shipping' && (
-                  <div className="space-y-3 text-sm text-muted-foreground">
+                {activeTab === 'pengiriman' && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="space-y-3 text-sm text-muted-foreground"
+                  >
                     <div className="flex items-start gap-3 bg-muted/50 rounded-lg p-3">
                       <span className="text-lg">🚚</span>
                       <div>
-                        <p className="font-semibold text-foreground">Freight shipping included</p>
-                        <p>Large machinery items are delivered via specialized flatbed freight. Estimated 5–14 business days depending on location.</p>
+                        <p className="font-semibold text-foreground">Termasuk ongkos kirim kargo</p>
+                        <p>Barang mesin besar dikirim melalui kargo bak datar khusus. Estimasi 5–14 hari kerja tergantung lokasi.</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3 bg-muted/50 rounded-lg p-3">
                       <span className="text-lg">📍</span>
                       <div>
-                        <p className="font-semibold text-foreground">Curbside delivery</p>
-                        <p>Standard delivery is to your driveway or farm gate. Site delivery and crane unloading available on request.</p>
+                        <p className="font-semibold text-foreground">Pengiriman ke tepi jalan</p>
+                        <p>Pengiriman standar adalah ke jalan masuk atau gerbang pertanian Anda. Pengiriman ke lokasi dan pembongkaran dengan derek tersedia berdasarkan permintaan.</p>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 )}
-                {activeTab === 'warranty' && (
-                  <div className="space-y-3 text-sm text-muted-foreground">
+                {activeTab === 'garansi' && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="space-y-3 text-sm text-muted-foreground"
+                  >
                     <div className="flex items-start gap-3 bg-muted/50 rounded-lg p-3">
                       <span className="text-lg">🛡️</span>
                       <div>
-                        <p className="font-semibold text-foreground">Manufacturer warranty</p>
-                        <p>All products sold on AgroForge carry full manufacturer warranty. Duration varies by brand — typically 1–3 years for machinery.</p>
+                        <p className="font-semibold text-foreground">Garansi pabrik</p>
+                        <p>Semua produk yang dijual di AgroForge memiliki garansi pabrik penuh. Durasi bervariasi berdasarkan merek — biasanya 1–3 tahun untuk mesin.</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3 bg-muted/50 rounded-lg p-3">
                       <span className="text-lg">↩️</span>
                       <div>
-                        <p className="font-semibold text-foreground">30-day return policy</p>
-                        <p>Return unused equipment in original condition within 30 days for a full refund. Return freight charges apply for large items.</p>
+                        <p className="font-semibold text-foreground">Kebijakan pengembalian 30 hari</p>
+                        <p>Kembalikan peralatan yang belum digunakan dalam kondisi asli dalam waktu 30 hari untuk pengembalian dana penuh. Biaya kirim pengembalian berlaku untuk barang besar.</p>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 )}
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
+
