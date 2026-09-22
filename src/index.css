@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Outfit:wght@300;400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --color-background: #F5EFE2;
+  --color-foreground: #1A2518;
+  --color-card: #FDFAF4;
+  --color-card-foreground: #1A2518;
+  --color-primary: #2A5C1F;
+  --color-primary-foreground: #F5EFE2;
+  --color-primary-hover: #234D1A;
+  --color-secondary: #E4DBCB;
+  --color-secondary-foreground: #2A5C1F;
+  --color-accent: #C4511A;
+  --color-accent-foreground: #FFFFFF;
+  --color-accent-hover: #A8431400;
+  --color-muted: #EBE4D6;
+  --color-muted-foreground: #6B5F52;
+  --color-border: #D4CCBA;
+  --color-ring: #2A5C1F;
+  --color-success: #16A34A;
+  --color-success-bg: #DCFCE7;
+  --color-warning: #D97706;
+  --color-warning-bg: #FEF3C7;
+  --color-error: #DC2626;
+  --color-error-bg: #FEE2E2;
+  --color-info: #2563EB;
+
+  --font-display: 'Fraunces', serif;
+  --font-sans: 'Outfit', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  --animate-shimmer: shimmer 1.8s ease-in-out infinite;
+  --animate-fade-up: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-fade-in: fadeIn 0.35s ease-out forwards;
+  --animate-slide-right: slideRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-slide-up-modal: slideUpModal 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-bounce-in: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes shimmer {
+  0% { background-position: -400% 0; }
+  100% { background-position: 400% 0; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideRight {
+  from { opacity: 0; transform: translateX(32px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideUpModal {
+  from { opacity: 0; transform: translateY(40px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes bounceIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+* {
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 2px;
+}
+
+html, body {
+  font-family: var(--font-sans);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.shimmer-bg {
+  background: linear-gradient(
+    90deg,
+    var(--color-muted) 0%,
+    var(--color-secondary) 40%,
+    var(--color-muted) 80%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+.font-display { font-family: var(--font-display); }
+.font-mono { font-family: var(--font-mono); }
+
+/* Hide scrollbar while scrolling */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Page transition wrapper */
+.page-enter { animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+/* Star rating */
+.star-filled { color: #D97706; }
+.star-empty { color: #D4CCBA; }
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+  border-radius: 4px;
+}

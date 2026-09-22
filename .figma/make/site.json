@@ -1,0 +1,10 @@
+{
+  "description": "AgroForge is a premium e-commerce platform for buying and selling agricultural tools and machinery, offering a seamless shopping experience with real-time inventory tracking.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
