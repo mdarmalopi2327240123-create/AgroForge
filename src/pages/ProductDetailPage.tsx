@@ -75,7 +75,7 @@ export default function ProductDetailPage({ product, onAddToCart, onBack }: Prod
             </div>
             {/* Thumbnail row */}
             <div className="flex gap-3">
-              {[imageUrl, imageUrl, imageUrl].map((src, i) => (
+              {[imageUrl].map((src, i) => (
                 <button key={i} className={`w-20 h-16 rounded-xl overflow-hidden border-2 transition-all ${i === 0 ? 'border-primary' : 'border-transparent hover:border-border'}`}>
                   <img src={src} alt="" className="w-full h-full object-cover" />
                 </button>
