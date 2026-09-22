@@ -197,7 +197,7 @@ export default function MarketplacePage({ onViewProduct, onAddToCart }: Marketpl
 
       {/* Mobile filter drawer */}
       {showMobileFilter && (
-        <div className="fixed inset-0 z-[100] flex">
+        <motion.div className="fixed inset-0 z-[100] flex">
           <div className="absolute inset-0 bg-foreground/40 backdrop-blur-sm" onClick={() => setShowMobileFilter(false)} />
           <div className="relative mt-auto w-full max-h-[85vh] overflow-y-auto bg-card rounded-t-2xl p-4 animate-slide-up-modal">
             <FilterSidebar filters={filters} onChange={setFilter} onClose={() => setShowMobileFilter(false)} />
@@ -208,7 +208,7 @@ export default function MarketplacePage({ onViewProduct, onAddToCart }: Marketpl
               Show {filteredProducts.length} results
             </button>
           </div>
-        </div>
+        </motion.div>
       )}
 
       <ErrorModal
