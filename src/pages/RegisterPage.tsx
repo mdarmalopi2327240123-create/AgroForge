@@ -12,8 +12,8 @@ export default function RegisterPage({ onLogin, onNavigateLogin }: RegisterPageP
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [farmName, setFarmName] = useState('');
-  const [password, setKata Sdani] = useState('');
-  const [confirmKata Sdani, setConfirmKata Sdani] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -21,8 +21,8 @@ export default function RegisterPage({ onLogin, onNavigateLogin }: RegisterPageP
     const e: Record<string, string> = {};
     if (!name.trim()) e.name = 'Full name is required';
     if (!email.includes('@')) e.email = 'Valid email required';
-    if (!password || password.length < 8) e.password = 'Kata Sdani must be at least 8 characters';
-    if (password !== confirmKata Sdani) e.confirmKata Sdani = 'Kata Sdanis do not match';
+    if (!password || password.length < 8) e.password = 'Password must be at least 8 characters';
+    if (password !== confirmPassword) e.confirmPassword = 'Passwords do not match';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -96,8 +96,8 @@ export default function RegisterPage({ onLogin, onNavigateLogin }: RegisterPageP
               {[
                 { id: 'name', label: 'Nama Lengkap', value: name, onChange: setName, placeholder: 'Marcus Tillman', type: 'text' },
                 { id: 'email', label: 'Alamat Email', value: email, onChange: setEmail, placeholder: 'you@example.com', type: 'email' },
-                { id: 'password', label: 'Kata Sdani', value: password, onChange: setKata Sdani, placeholder: '8+ characters', type: 'password' },
-                { id: 'confirmKata Sdani', label: 'Confirm Kata Sdani', value: confirmKata Sdani, onChange: setConfirmKata Sdani, placeholder: 'Re-enter password', type: 'password' },
+                { id: 'password', label: 'Password', value: password, onChange: setPassword, placeholder: '8+ characters', type: 'password' },
+                { id: 'confirmPassword', label: 'Confirm Password', value: confirmPassword, onChange: setConfirmPassword, placeholder: 'Re-enter password', type: 'password' },
               ].map(({ id, label, value, onChange, placeholder, type }) => (
                 <div key={id}>
                   <label className="block text-sm font-medium text-foreground mb-1.5">{label}</label>

@@ -13,8 +13,8 @@ const DEMO_ACCOUNTS = [
 
 export default function LoginPage({ onLogin, onNavigateRegister }: LoginPageProps) {
   const [email, setEmail] = useState('');
-  const [password, setKata Sandi] = useState('');
-  const [showKata Sandi, setShowKata Sandi] = useState(false);
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState<UserRole>('buyer');
@@ -41,7 +41,7 @@ export default function LoginPage({ onLogin, onNavigateRegister }: LoginPageProp
   const useDemoAccount = (role: UserRole) => {
     const account = DEMO_ACCOUNTS.find(a => a.role === role)!;
     setEmail(account.email);
-    setKata Sandi(account.password);
+    setPassword(account.password);
     setSelectedRole(role);
   };
 
@@ -162,19 +162,19 @@ export default function LoginPage({ onLogin, onNavigateRegister }: LoginPageProp
               <label className="block text-sm font-medium text-foreground mb-1.5">Kata Sandi</label>
               <div className="relative">
                 <input
-                  type={showKata Sandi ? 'text' : 'password'}
+                  type={showPassword ? 'text' : 'password'}
                   value={password}
-                  onChange={e => setKata Sandi(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   required
                   placeholder="••••••••"
                   className="w-full px-3.5 py-3 pr-11 border border-border rounded-xl bg-card text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all"
                 />
                 <button
                   type="button"
-                  onClick={() => setShowKata Sandi(v => !v)}
+                  onClick={() => setShowPassword(v => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {showKata Sandi
+                  {showPassword
                     ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" /><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" /><line x1="1" y1="1" x2="23" y2="23" /></svg>
                     : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
                   }

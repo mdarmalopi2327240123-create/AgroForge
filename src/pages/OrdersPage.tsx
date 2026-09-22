@@ -1,30 +1,30 @@
 import { useState } from 'react';
-import { Order, OrderStatus } from '../types';
+import { Pesanan, PesananStatus } from '../types';
 import { MOCK_ORDERS } from '../data/products';
 
-interface OrdersPageProps {
-  newOrder?: Order | null;
+interface PesanansPageProps {
+  newPesanan?: Pesanan | null;
 }
 
-const ORDER_STEPS: { status: OrderStatus; label: string; icon: string }[] = [
-  { status: 'processing', label: 'Order Placed', icon: '📋' },
+const ORDER_STEPS: { status: PesananStatus; label: string; icon: string }[] = [
+  { status: 'processing', label: 'Pesanan Placed', icon: '📋' },
   { status: 'confirmed', label: 'Confirmed', icon: '✅' },
   { status: 'shipped', label: 'Shipped', icon: '📦' },
   { status: 'out_for_delivery', label: 'Out for Delivery', icon: '🚚' },
   { status: 'delivered', label: 'Delivered', icon: '🏠' },
 ];
 
-const STATUS_ORDER: OrderStatus[] = ['processing', 'confirmed', 'shipped', 'out_for_delivery', 'delivered'];
+const STATUS_ORDER: PesananStatus[] = ['processing', 'confirmed', 'shipped', 'out_for_delivery', 'delivered'];
 
-const statusBadge: Record<OrderStatus, { label: string; bg: string; text: string }> = {
-  processing: { label: 'Processing', bg: 'bg-info/10', text: 'text-info' },
+const statusBadge: Record<PesananStatus, { label: string; bg: string; text: string }> = {
+  processing: { label: 'Diproses', bg: 'bg-info/10', text: 'text-info' },
   confirmed: { label: 'Confirmed', bg: 'bg-primary/10', text: 'text-primary' },
   shipped: { label: 'Shipped', bg: 'bg-warning-bg', text: 'text-warning' },
   out_for_delivery: { label: 'Out for Delivery', bg: 'bg-accent/10', text: 'text-accent' },
   delivered: { label: 'Delivered', bg: 'bg-success-bg', text: 'text-success' },
 };
 
-function OrderTimeline({ status }: { status: OrderStatus }) {
+function PesananTimeline({ status }: { status: PesananStatus }) {
   const currentIdx = STATUS_ORDER.indexOf(status);
 
   return (
@@ -66,44 +66,44 @@ function OrderTimeline({ status }: { status: OrderStatus }) {
   );
 }
 
-export default function OrdersPage({ newOrder }: OrdersPageProps) {
-  const allOrders = newOrder ? [newOrder, ...MOCK_ORDERS] : MOCK_ORDERS;
-  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(newOrder?.orderId || allOrders[0]?.orderId || null);
+export default function PesanansPage({ newPesanan }: PesanansPageProps) {
+  const allPesanans = newPesanan ? [newPesanan, ...MOCK_ORDERS] : MOCK_ORDERS;
+  const [selectedPesananId, setSelectedPesananId] = useState<string | null>(newPesanan?.orderId || allPesanans[0]?.orderId || null);
 
-  const selectedOrder = allOrders.find(o => o.orderId === selectedOrderId);
+  const selectedPesanan = allPesanans.find(o => o.orderId === selectedPesananId);
 
   const formatPrice = (n: number) => `$${n.toLocaleString()}`;
-  const formatDate = (d: string) => new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  const formatTanggal = (d: string) => new Tanggal(d).toLocaleTanggalString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-screen-xl mx-auto px-4 lg:px-8 py-6">
         <div className="mb-6 animate-fade-in">
-          <h1 className="font-display text-2xl lg:text-3xl font-semibold text-foreground">My Orders</h1>
-          <p className="text-muted-foreground text-sm mt-1">{allOrders.length} order{allOrders.length !== 1 ? 's' : ''} · all time</p>
+          <h1 className="font-display text-2xl lg:text-3xl font-semibold text-foreground">My Pesanans</h1>
+          <p className="text-muted-foreground text-sm mt-1">{allPesanans.length} order{allPesanans.length !== 1 ? 's' : ''} · all time</p>
         </div>
 
         {/* New order confirmation banner */}
-        {newOrder && (
+        {newPesanan && (
           <div className="mb-6 bg-success-bg border border-success/20 rounded-2xl p-4 flex items-start gap-3 animate-bounce-in">
             <div className="w-10 h-10 bg-success rounded-full flex items-center justify-center shrink-0 text-white text-xl">✅</div>
             <div>
-              <p className="font-semibold text-foreground">Order placed successfully!</p>
-              <p className="text-sm text-muted-foreground">Order <span className="font-mono font-medium">{newOrder.orderId}</span> has been confirmed. Estimated delivery: {formatDate(newOrder.estimatedDelivery)}</p>
+              <p className="font-semibold text-foreground">Pesanan placed successfully!</p>
+              <p className="text-sm text-muted-foreground">Pesanan <span className="font-mono font-medium">{newPesanan.orderId}</span> has been confirmed. Estimated delivery: {formatTanggal(newPesanan.estimatedDelivery)}</p>
             </div>
           </div>
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-5 animate-fade-up">
-          {/* Order list */}
+          {/* Pesanan list */}
           <div className="flex flex-col gap-3">
-            {allOrders.map(order => {
+            {allPesanans.map(order => {
               const badge = statusBadge[order.orderStatus];
-              const isSelected = selectedOrderId === order.orderId;
+              const isSelected = selectedPesananId === order.orderId;
               return (
                 <button
                   key={order.orderId}
-                  onClick={() => setSelectedOrderId(order.orderId)}
+                  onClick={() => setSelectedPesananId(order.orderId)}
                   className={`text-left bg-card border-2 rounded-xl p-4 transition-all ${
                     isSelected ? 'border-primary shadow-md' : 'border-border hover:border-primary/30'
                   }`}
@@ -111,7 +111,7 @@ export default function OrdersPage({ newOrder }: OrdersPageProps) {
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="font-mono text-xs font-medium text-muted-foreground">{order.orderId}</p>
-                      <p className="font-semibold text-sm text-foreground mt-0.5">{formatDate(order.orderDate)}</p>
+                      <p className="font-semibold text-sm text-foreground mt-0.5">{formatTanggal(order.orderTanggal)}</p>
                     </div>
                     <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${badge.bg} ${badge.text} whitespace-nowrap`}>
                       {badge.label}
@@ -126,50 +126,50 @@ export default function OrdersPage({ newOrder }: OrdersPageProps) {
             })}
           </div>
 
-          {/* Order detail */}
-          {selectedOrder && (
+          {/* Pesanan detail */}
+          {selectedPesanan && (
             <div className="bg-card border border-border rounded-2xl overflow-hidden">
               <div className="p-5 border-b border-border">
                 <div className="flex items-start justify-between flex-wrap gap-3">
                   <div>
-                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Order ID</p>
-                    <p className="font-mono font-bold text-lg text-foreground mt-0.5">{selectedOrder.orderId}</p>
-                    <p className="text-sm text-muted-foreground">Placed {formatDate(selectedOrder.orderDate)}</p>
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Pesanan ID</p>
+                    <p className="font-mono font-bold text-lg text-foreground mt-0.5">{selectedPesanan.orderId}</p>
+                    <p className="text-sm text-muted-foreground">Placed {formatTanggal(selectedPesanan.orderTanggal)}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-muted-foreground">Order Total</p>
-                    <p className="font-mono font-bold text-xl text-foreground">{formatPrice(selectedOrder.totalAmount)}</p>
-                    <p className="text-xs text-muted-foreground">{selectedOrder.paymentMethod}</p>
+                    <p className="text-xs text-muted-foreground">Pesanan Total</p>
+                    <p className="font-mono font-bold text-xl text-foreground">{formatPrice(selectedPesanan.totalAmount)}</p>
+                    <p className="text-xs text-muted-foreground">{selectedPesanan.paymentMethod}</p>
                   </div>
                 </div>
               </div>
 
-              {/* Shipping timeline */}
+              {/* Pengiriman timeline */}
               <div className="p-5 border-b border-border">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-display font-semibold text-base text-foreground">Shipping Status</h3>
+                  <h3 className="font-display font-semibold text-base text-foreground">Pengiriman Status</h3>
                   <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="9" y1="21" x2="9" y2="9" /></svg>
-                    Est. delivery: <strong className="text-foreground">{formatDate(selectedOrder.estimatedDelivery)}</strong>
+                    Est. delivery: <strong className="text-foreground">{formatTanggal(selectedPesanan.estimatedDelivery)}</strong>
                   </div>
                 </div>
-                <OrderTimeline status={selectedOrder.orderStatus} />
+                <PesananTimeline status={selectedPesanan.orderStatus} />
 
-                {selectedOrder.trackingNumber && (
+                {selectedPesanan.trackingNumber && (
                   <div className="mt-4 flex items-center gap-2 bg-muted rounded-lg px-3 py-2.5">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted-foreground shrink-0"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
                     <span className="text-xs text-muted-foreground">Tracking:</span>
-                    <span className="font-mono text-xs font-semibold text-foreground">{selectedOrder.trackingNumber}</span>
+                    <span className="font-mono text-xs font-semibold text-foreground">{selectedPesanan.trackingNumber}</span>
                     <button className="ml-auto text-xs text-primary font-medium hover:underline">Track →</button>
                   </div>
                 )}
               </div>
 
-              {/* Items */}
+              {/* Item */}
               <div className="p-5 border-b border-border">
-                <h3 className="font-display font-semibold text-base text-foreground mb-3">Items Ordered</h3>
+                <h3 className="font-display font-semibold text-base text-foreground mb-3">Item Pesananed</h3>
                 <div className="space-y-3">
-                  {selectedOrder.items.map(({ product, quantity }) => (
+                  {selectedPesanan.items.map(({ product, quantity }) => (
                     <div key={product.id} className="flex items-center gap-3">
                       <img src={product.imageUrl} alt={product.productTitle} className="w-14 h-14 object-cover rounded-xl bg-muted" />
                       <div className="flex-1 min-w-0">
@@ -187,13 +187,13 @@ export default function OrdersPage({ newOrder }: OrdersPageProps) {
               <div className="p-5">
                 <h3 className="font-display font-semibold text-base text-foreground mb-3">Delivery Address</h3>
                 <div className="bg-muted/50 rounded-xl p-4 text-sm">
-                  <p className="font-semibold text-foreground">{selectedOrder.shippingAddress.fullName}</p>
-                  <p className="text-muted-foreground">{selectedOrder.shippingAddress.addressLine1}</p>
-                  <p className="text-muted-foreground">{selectedOrder.shippingAddress.city}, {selectedOrder.shippingAddress.state} {selectedOrder.shippingAddress.zipCode}</p>
-                  <p className="text-muted-foreground mt-1">{selectedOrder.shippingAddress.phone}</p>
+                  <p className="font-semibold text-foreground">{selectedPesanan.shippingAddress.fullName}</p>
+                  <p className="text-muted-foreground">{selectedPesanan.shippingAddress.addressLine1}</p>
+                  <p className="text-muted-foreground">{selectedPesanan.shippingAddress.city}, {selectedPesanan.shippingAddress.state} {selectedPesanan.shippingAddress.zipCode}</p>
+                  <p className="text-muted-foreground mt-1">{selectedPesanan.shippingAddress.phone}</p>
                 </div>
 
-                {selectedOrder.orderStatus !== 'delivered' && (
+                {selectedPesanan.orderStatus !== 'delivered' && (
                   <button className="mt-4 w-full border border-error text-error py-2.5 rounded-xl text-sm font-medium hover:bg-error-bg transition-colors">
                     Request Cancellation
                   </button>

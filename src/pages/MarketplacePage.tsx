@@ -22,7 +22,7 @@ const SORT_OPTIONS = [
 ];
 
 const DEFAULT_FILTERS: FilterState = {
-  category: 'All Categories',
+  category: 'Semua Kategori',
   brands: [],
   priceMin: '',
   priceMax: '',
@@ -34,9 +34,9 @@ export default function MarketplacePage({ onViewProduct, onAddToCart }: Marketpl
   const [isLoading, setIsLoading] = useState(true);
   const [showError, setShowError] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
-  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
+  const [filters, setFilter] = useState<FilterState>(DEFAULT_FILTERS);
   const [sortBy, setSortBy] = useState('featured');
-  const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [showMobileFilter, setShowMobileFilter] = useState(false);
 
   // Simulate API fetch
   useEffect(() => {
@@ -53,7 +53,7 @@ export default function MarketplacePage({ onViewProduct, onAddToCart }: Marketpl
   const filteredProducts = useMemo(() => {
     let result = [...products];
 
-    if (filters.category !== 'All Categories') {
+    if (filters.category !== 'Semua Kategori') {
       result = result.filter(p => p.category === filters.category);
     }
     if (filters.brands.length > 0) {
@@ -83,7 +83,7 @@ export default function MarketplacePage({ onViewProduct, onAddToCart }: Marketpl
     return result;
   }, [products, filters, sortBy]);
 
-  const hasActiveFilters = JSON.stringify(filters) !== JSON.stringify(DEFAULT_FILTERS);
+  const hasActiveFilter = JSON.stringify(filters) !== JSON.stringify(DEFAULT_FILTERS);
 
   return (
     <div className="min-h-screen bg-background">
@@ -100,12 +100,12 @@ export default function MarketplacePage({ onViewProduct, onAddToCart }: Marketpl
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={() => setShowMobileFilters(true)}
+              onClick={() => setShowMobileFilter(true)}
               className="lg:hidden flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-xl text-sm font-medium hover:bg-muted transition-colors"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="4" y1="6" x2="20" y2="6" /><line x1="8" y1="12" x2="16" y2="12" /><line x1="12" y1="18" x2="12" y2="18" /></svg>
-              Filters
-              {hasActiveFilters && <span className="w-2 h-2 rounded-full bg-accent" />}
+              Filter
+              {hasActiveFilter && <span className="w-2 h-2 rounded-full bg-accent" />}
             </button>
             <select
               value={sortBy}
@@ -124,7 +124,7 @@ export default function MarketplacePage({ onViewProduct, onAddToCart }: Marketpl
       <div className="lg:hidden px-4 pt-4">
         <CategoryChips
           selected={filters.category}
-          onSelect={cat => setFilters(f => ({ ...f, category: cat }))}
+          onSelect={cat => setFilter(f => ({ ...f, category: cat }))}
         />
       </div>
 
@@ -133,7 +133,7 @@ export default function MarketplacePage({ onViewProduct, onAddToCart }: Marketpl
         <div className="flex gap-6">
           {/* Desktop sidebar */}
           <div className="hidden lg:block w-64 shrink-0">
-            <FilterSidebar filters={filters} onChange={setFilters} />
+            <FilterSidebar filters={filters} onChange={setFilter} />
           </div>
 
           {/* Product grid */}
@@ -146,7 +146,7 @@ export default function MarketplacePage({ onViewProduct, onAddToCart }: Marketpl
               <EmptyState
                 title="No products found"
                 description="Try adjusting your filters or search in a different category to find what you're looking for."
-                onReset={() => setFilters(DEFAULT_FILTERS)}
+                onReset={() => setFilter(DEFAULT_FILTERS)}
               />
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -163,12 +163,12 @@ export default function MarketplacePage({ onViewProduct, onAddToCart }: Marketpl
             )}
 
             {/* Active filter tags */}
-            {hasActiveFilters && !isLoading && (
+            {hasActiveFilter && !isLoading && (
               <div className="flex flex-wrap gap-2 mt-4">
-                {filters.category !== 'All Categories' && (
+                {filters.category !== 'Semua Kategori' && (
                   <span className="flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary text-xs rounded-full font-medium">
                     {filters.category}
-                    <button onClick={() => setFilters(f => ({ ...f, category: 'All Categories' }))}>
+                    <button onClick={() => setFilter(f => ({ ...f, category: 'Semua Kategori' }))}>
                       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                     </button>
                   </span>
@@ -176,7 +176,7 @@ export default function MarketplacePage({ onViewProduct, onAddToCart }: Marketpl
                 {filters.brands.map(b => (
                   <span key={b} className="flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary text-xs rounded-full font-medium">
                     {b}
-                    <button onClick={() => setFilters(f => ({ ...f, brands: f.brands.filter(x => x !== b) }))}>
+                    <button onClick={() => setFilter(f => ({ ...f, brands: f.brands.filter(x => x !== b) }))}>
                       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                     </button>
                   </span>
@@ -184,7 +184,7 @@ export default function MarketplacePage({ onViewProduct, onAddToCart }: Marketpl
                 {filters.stockOnly && (
                   <span className="flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary text-xs rounded-full font-medium">
                     In-stock only
-                    <button onClick={() => setFilters(f => ({ ...f, stockOnly: false }))}>
+                    <button onClick={() => setFilter(f => ({ ...f, stockOnly: false }))}>
                       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                     </button>
                   </span>
@@ -196,13 +196,13 @@ export default function MarketplacePage({ onViewProduct, onAddToCart }: Marketpl
       </div>
 
       {/* Mobile filter drawer */}
-      {showMobileFilters && (
+      {showMobileFilter && (
         <div className="fixed inset-0 z-[100] flex">
-          <div className="absolute inset-0 bg-foreground/40 backdrop-blur-sm" onClick={() => setShowMobileFilters(false)} />
+          <div className="absolute inset-0 bg-foreground/40 backdrop-blur-sm" onClick={() => setShowMobileFilter(false)} />
           <div className="relative mt-auto w-full max-h-[85vh] overflow-y-auto bg-card rounded-t-2xl p-4 animate-slide-up-modal">
-            <FilterSidebar filters={filters} onChange={setFilters} onClose={() => setShowMobileFilters(false)} />
+            <FilterSidebar filters={filters} onChange={setFilter} onClose={() => setShowMobileFilter(false)} />
             <button
-              onClick={() => setShowMobileFilters(false)}
+              onClick={() => setShowMobileFilter(false)}
               className="w-full mt-4 bg-primary text-primary-foreground py-3 rounded-xl font-semibold text-sm"
             >
               Show {filteredProducts.length} results
