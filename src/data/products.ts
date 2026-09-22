@@ -102,7 +102,7 @@ export const PRODUCTS: Product[] = [
     stockQuantity: 24,
     rating: 4.9,
     reviewCount: 412,
-    imageUrl: 'https://images.unsplash.com/photo-1527846707780-4e0b0b8c9a56?w=700&h=480&fit=crop&auto=format',
+    imageUrl: 'https://images.unsplash.com/photo-1457142303112-9f2b3a9b51a6?w=700&h=480&fit=crop&auto=format',
     specs: { Engine: '70.6cc X-TORQ®', 'Power Output': '4.0 kW / 5.4 HP', 'Bar Length': '45–76 cm options', Weight: '6.2 kg (excl. bar)', 'Oil Tank': '400 ml', AutoTune: 'Yes, auto-calibrating' },
     tags: ['chainsaw', 'timber', 'professional'],
     isFeatured: false,
