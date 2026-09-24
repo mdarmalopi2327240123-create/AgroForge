@@ -1,4 +1,5 @@
 export type Page =
+  | 'landing'
   | 'login'
   | 'register'
   | 'marketplace'

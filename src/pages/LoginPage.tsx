@@ -85,19 +85,19 @@ export default function LoginPage({ onLogin, onNavigateRegister }: LoginPageProp
         <div className="relative z-10 flex flex-col gap-8">
           <div>
             <h1 className="font-display text-5xl font-semibold text-white leading-tight">
-              The premium<br />agri-marketplace
+              Marketplace Agrikultur<br />No. 1 di Indonesia
             </h1>
             <p className="text-white/70 text-lg mt-4 leading-relaxed max-w-sm">
-              Source certified machinery, precision tools, and farming equipment from trusted suppliers worldwide.
+              Temukan mesin bersertifikat, alat presisi, dan perlengkapan pertanian dari supplier terpercaya seluruh Indonesia.
             </p>
           </div>
 
           {/* Stats */}
           <div className="grid grid-cols-3 gap-6">
             {[
-              { value: '12,400+', label: 'Products listed' },
-              { value: '$2.1B', label: 'GMV traded' },
-              { value: '98.4%', label: 'Satisfaction rate' },
+              { value: '12,400+', label: 'Produk terdaftar' },
+              { value: '$2.1B', label: 'Nilai transaksi' },
+              { value: '98.4%', label: 'Tingkat kepuasan' },
             ].map(({ value, label }) => (
               <div key={label}>
                 <p className="font-display text-2xl font-semibold text-white">{value}</p>
@@ -128,7 +128,7 @@ export default function LoginPage({ onLogin, onNavigateRegister }: LoginPageProp
             <span className="font-display text-lg font-semibold text-primary">AgroForge</span>
           </div>
 
-          <h2 className="font-display text-3xl font-semibold text-foreground">Welcome back</h2>
+          <h2 className="font-display text-3xl font-semibold text-foreground">Selamat Datang Kembali</h2>
           <p className="text-muted-foreground mt-2 text-sm">Masuk ke akun Anda to continue</p>
 
           {/* Role selector */}
@@ -150,7 +150,7 @@ export default function LoginPage({ onLogin, onNavigateRegister }: LoginPageProp
 
           <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Email address</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">Alamat Email</label>
               <input
                 type="email"
                 value={email}
@@ -199,13 +199,13 @@ export default function LoginPage({ onLogin, onNavigateRegister }: LoginPageProp
               {isLoading ? (
                 <>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ animation: 'spin 1s linear infinite' }}><path d="M21 12a9 9 0 1 1-6.219-8.56" /></svg>
-                  Signing in…
+                  Sedang masuk...
                 </>
               ) : 'Masuk'}
             </button>
           </form>
 
-          {/* Demo accounts */}
+          {/* Akun Demo */}
           <div className="mt-6 p-4 bg-muted rounded-xl border border-border">
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Demo accounts</p>
             <div className="flex flex-col gap-2">
@@ -228,7 +228,7 @@ export default function LoginPage({ onLogin, onNavigateRegister }: LoginPageProp
           <p className="text-center text-sm text-muted-foreground mt-6">
             Belum punya akun?{' '}
             <button onClick={onNavigateRegister} className="text-primary font-semibold hover:underline">
-              Create one free
+              Daftar Gratis sekarang
             </button>
           </p>
         </div>

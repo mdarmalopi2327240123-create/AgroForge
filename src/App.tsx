@@ -10,10 +10,12 @@ import ProductDetailPage from './pages/ProductDetailPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrdersPage from './pages/OrdersPage';
 import AdminPage from './pages/AdminPage';
+import LandingPage from './pages/LandingPage';
+import Footer from './components/Footer';
 import SellerDashboard from './pages/SellerDashboard';
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<Page>('login');
+  const [currentPage, setCurrentPage] = useState<Page>('landing');
   const [pageKey, setPageKey] = useState(0);
   const [user, setUser] = useState<User | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -78,10 +80,12 @@ export default function App() {
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const cartTotal = cart.reduce((sum, item) => sum + item.product.itemPrice * item.quantity, 0);
 
-  const isAuthPage = currentPage === 'login' || currentPage === 'register';
+  const isAuthPage = currentPage === 'login' || currentPage === 'register' || currentPage === 'landing';
 
   const renderPage = () => {
     switch (currentPage) {
+      case 'landing':
+        return <LandingPage onNavigate={navigate} />;
       case 'login':
         return (
           <LoginPage
@@ -166,6 +170,7 @@ export default function App() {
         {renderPage()}
       </main>
 
+      {(currentPage !== 'login' && currentPage !== 'register') && <Footer />}
       {/* Mobile bottom nav */}
       {!isAuthPage && user && (
         <BottomNav
