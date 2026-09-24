@@ -5,7 +5,8 @@ export type Page =
   | 'product-detail'
   | 'checkout'
   | 'orders'
-  | 'admin';
+  | 'admin'
+  | 'seller-dashboard';
 
 export type UserRole = 'pembeli' | 'penjual' | 'admin';
 export type StockStatus = 'in_stock' | 'low_stock' | 'out_of_stock';

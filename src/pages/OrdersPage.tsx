@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Pesanan, PesananStatus } from '../types';
+import { Order as Pesanan, OrderStatus as PesananStatus } from '../types';
 import { MOCK_ORDERS } from '../data/products';
 
 interface PesanansPageProps {
-  newPesanan?: Pesanan | null;
+  newOrder?: Pesanan | null;
 }
 
 const ORDER_STEPS: { status: PesananStatus; label: string; icon: string }[] = [
@@ -66,9 +66,9 @@ function PesananTimeline({ status }: { status: PesananStatus }) {
   );
 }
 
-export default function PesanansPage({ newPesanan }: PesanansPageProps) {
-  const allPesanans = newPesanan ? [newPesanan, ...MOCK_ORDERS] : MOCK_ORDERS;
-  const [selectedPesananId, setSelectedPesananId] = useState<string | null>(newPesanan?.orderId || allPesanans[0]?.orderId || null);
+export default function PesanansPage({ newOrder }: PesanansPageProps) {
+  const allPesanans = newOrder ? [newOrder, ...MOCK_ORDERS] : MOCK_ORDERS;
+  const [selectedPesananId, setSelectedPesananId] = useState<string | null>(newOrder?.orderId || allPesanans[0]?.orderId || null);
 
   const selectedPesanan = allPesanans.find(o => o.orderId === selectedPesananId);
 
@@ -84,12 +84,12 @@ export default function PesanansPage({ newPesanan }: PesanansPageProps) {
         </div>
 
         {/* New order confirmation banner */}
-        {newPesanan && (
+        {newOrder && (
           <div className="mb-6 bg-success-bg border border-success/20 rounded-2xl p-4 flex items-start gap-3 animate-bounce-in">
             <div className="w-10 h-10 bg-success rounded-full flex items-center justify-center shrink-0 text-white text-xl">✅</div>
             <div>
               <p className="font-semibold text-foreground">Pesanan placed successfully!</p>
-              <p className="text-sm text-muted-foreground">Pesanan <span className="font-mono font-medium">{newPesanan.orderId}</span> has been confirmed. Estimated delivery: {formatTanggal(newPesanan.estimatedDelivery)}</p>
+              <p className="text-sm text-muted-foreground">Pesanan <span className="font-mono font-medium">{newOrder.orderId}</span> has been confirmed. Estimated delivery: {formatTanggal(newOrder.estimatedDelivery)}</p>
             </div>
           </div>
         )}
@@ -111,7 +111,7 @@ export default function PesanansPage({ newPesanan }: PesanansPageProps) {
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="font-mono text-xs font-medium text-muted-foreground">{order.orderId}</p>
-                      <p className="font-semibold text-sm text-foreground mt-0.5">{formatTanggal(order.orderTanggal)}</p>
+                      <p className="font-semibold text-sm text-foreground mt-0.5">{formatTanggal(order.orderDate)}</p>
                     </div>
                     <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${badge.bg} ${badge.text} whitespace-nowrap`}>
                       {badge.label}
@@ -134,7 +134,7 @@ export default function PesanansPage({ newPesanan }: PesanansPageProps) {
                   <div>
                     <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Pesanan ID</p>
                     <p className="font-mono font-bold text-lg text-foreground mt-0.5">{selectedPesanan.orderId}</p>
-                    <p className="text-sm text-muted-foreground">Placed {formatTanggal(selectedPesanan.orderTanggal)}</p>
+                    <p className="text-sm text-muted-foreground">Placed {formatTanggal(selectedPesanan.orderDate)}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-xs text-muted-foreground">Pesanan Total</p>

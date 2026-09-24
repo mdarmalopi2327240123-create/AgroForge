@@ -10,6 +10,7 @@ import ProductDetailPage from './pages/ProductDetailPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrdersPage from './pages/OrdersPage';
 import AdminPage from './pages/AdminPage';
+import SellerDashboard from './pages/SellerDashboard';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>('login');
@@ -28,7 +29,7 @@ export default function App() {
 
   const handleLogin = (role: UserRole, email: string, name: string) => {
     setUser({ id: crypto.randomUUID(), name, email, role });
-    navigate(role === 'admin' ? 'admin' : 'marketplace');
+    navigate(role === 'admin' ? 'admin' : (role === 'penjual' ? 'seller-dashboard' : 'marketplace'));
   };
 
   const handleLogout = () => {
@@ -133,6 +134,10 @@ export default function App() {
 
       case 'admin':
         return <AdminPage />;
+
+      case 'seller-dashboard':
+        return <SellerDashboard />;
+
 
       default:
         return null;
