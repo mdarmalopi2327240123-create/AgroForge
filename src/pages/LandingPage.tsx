@@ -59,7 +59,7 @@ export default function LandingPage({ onNavigate }: { onNavigate: (p: any) => vo
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.8 }}
-            className="absolute -bottom-6 -left-6 bg-card p-4 rounded-2xl shadow-xl border border-border flex items-center gap-4"
+            className="absolute -bottom-4 left-4 sm:-bottom-6 sm:-left-6 bg-card p-4 rounded-2xl shadow-xl border border-border flex items-center gap-4"
           >
             <div className="w-12 h-12 bg-success-bg rounded-full flex items-center justify-center">
               <span className="text-success text-xl">🚜</span>
