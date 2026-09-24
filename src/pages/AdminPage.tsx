@@ -1,90 +1,61 @@
 import { useState } from 'react';
-import { Product } from '../types';
-import { PRODUCTS } from '../data/products';
-import { MOCK_ORDERS } from '../data/products';
+import { motion, AnimatePresence } from 'framer-motion';
 
-type AdminTab = 'overview' | 'inventory' | 'orders';
+type AdminTab = 'komplain' | 'penjual' | 'monitoring';
 
-const stockConfig = {
-  in_stock: { label: 'In Stock', bg: 'bg-success-bg', text: 'text-success' },
-  low_stock: { label: 'Stok Menipis', bg: 'bg-warning-bg', text: 'text-warning' },
-  out_of_stock: { label: 'Kehabisan Stok', bg: 'bg-error-bg', text: 'text-error' },
+// Mock data
+const MOCK_COMPLAINTS = [
+  { id: 'C-001', user: 'Budi Santoso', issue: 'Barang tidak sesuai deskripsi', status: 'pending', date: '2026-09-23' },
+  { id: 'C-002', user: 'Agus Pratama', issue: 'Pengiriman terlambat 5 hari', status: 'resolved', date: '2026-09-22' },
+  { id: 'C-003', user: 'Siti Aminah', issue: 'Penjual tidak merespon chat', status: 'investigating', date: '2026-09-24' },
+];
+
+const MOCK_SELLERS = [
+  { id: 'S-001', name: 'Tani Maju Jaya', rating: 4.8, active: true, complaints: 1 },
+  { id: 'S-002', name: 'Alat Tani Murah', rating: 3.2, active: true, complaints: 12 },
+  { id: 'S-003', name: 'Agro Makmur', rating: 4.5, active: false, complaints: 0 },
+];
+
+const MOCK_SYSTEM_STATS = {
+  cpu: '45%',
+  memory: '2.4GB / 8GB',
+  uptime: '99.9%',
+  activeUsers: 143,
 };
 
-function KpiCard({ label, value, sub, icon, trend }: { label: string; value: string; sub?: string; icon: string; trend?: 'up' | 'down' }) {
-  return (
-    <div className="bg-card border border-border rounded-2xl p-5 flex gap-4 items-start">
-      <div className="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center text-xl shrink-0">{icon}</div>
-      <div>
-        <p className="text-sm text-muted-foreground font-medium">{label}</p>
-        <p className="font-display text-2xl font-semibold text-foreground mt-0.5">{value}</p>
-        {sub && (
-          <p className={`text-xs font-medium flex items-center gap-1 mt-0.5 ${trend === 'up' ? 'text-success' : trend === 'down' ? 'text-error' : 'text-muted-foreground'}`}>
-            {trend === 'up' && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="18 15 12 9 6 15" /></svg>}
-            {trend === 'down' && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="6 9 12 15 18 9" /></svg>}
-            {sub}
-          </p>
-        )}
-      </div>
-    </div>
-  );
-}
-
 export default function AdminPage() {
-  const [activeTab, setActiveTab] = useState<AdminTab>('overview');
-  const [inventory, setInventory] = useState<Product[]>(PRODUCTS);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editValues, setEditValues] = useState<Partial<Product>>({});
-  const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState<AdminTab>('komplain');
+  const [sellers, setSellers] = useState(MOCK_SELLERS);
+  const [complaints, setComplaints] = useState(MOCK_COMPLAINTS);
 
-  const lowStockProducts = inventory.filter(p => p.stockStatus === 'low_stock' || p.stockQuantity <= 3);
-  const outOfStockCount = inventory.filter(p => p.stockStatus === 'out_of_stock').length;
-  const totalValue = inventory.reduce((sum, p) => sum + p.itemPrice * p.stockQuantity, 0);
-
-  const filteredInventory = inventory.filter(p =>
-    p.productTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.sku.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.brand.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const startEdit = (product: Product) => {
-    setEditingId(product.id);
-    setEditValues({ itemPrice: product.itemPrice, stockQuantity: product.stockQuantity, stockStatus: product.stockStatus });
+  const handleBanSeller = (id: string) => {
+    setSellers(prev => prev.map(s => s.id === id ? { ...s, active: !s.active } : s));
   };
 
-  const saveEdit = (productId: string) => {
-    setInventory(prev => prev.map(p => {
-      if (p.id !== productId) return p;
-      const qty = Number(editValues.stockQuantity ?? p.stockQuantity);
-      const status = qty === 0 ? 'out_of_stock' : qty <= 3 ? 'low_stock' : 'in_stock';
-      return { ...p, ...editValues, stockQuantity: qty, stockStatus: status };
-    }));
-    setEditingId(null);
-    setEditValues({});
+  const handleResolveComplaint = (id: string) => {
+    setComplaints(prev => prev.map(c => c.id === id ? { ...c, status: 'resolved' } : c));
   };
-
-  const formatPrice = (n: number) => `$${n.toLocaleString()}`;
 
   const tabs: { id: AdminTab; label: string; icon: string }[] = [
-    { id: 'overview', label: 'Overview', icon: '📊' },
-    { id: 'inventory', label: 'Inventory', icon: '📦' },
-    { id: 'orders', label: 'Orders', icon: '📋' },
+    { id: 'komplain', label: 'Komplain', icon: '📝' },
+    { id: 'penjual', label: 'Daftar Penjual', icon: '🏪' },
+    { id: 'monitoring', label: 'Monitoring', icon: '🖥️' },
   ];
 
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-screen-xl mx-auto px-4 lg:px-8 py-6">
         {/* Header */}
-        <div className="flex items-start justify-between mb-6 animate-fade-in">
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between mb-6">
           <div>
             <h1 className="font-display text-2xl lg:text-3xl font-semibold text-foreground">Admin Dashboard</h1>
-            <p className="text-muted-foreground text-sm mt-1">AgroForge platform management</p>
+            <p className="text-muted-foreground text-sm mt-1">Sistem Manajemen Platform</p>
           </div>
-          <div className="bg-accent/10 text-accent text-xs font-semibold px-3 py-1.5 rounded-full">Admin Access</div>
-        </div>
+          <div className="bg-accent/10 text-accent text-xs font-semibold px-3 py-1.5 rounded-full">Super Admin</div>
+        </motion.div>
 
         {/* Tabs */}
-        <div className="flex gap-1 bg-muted p-1 rounded-xl mb-6 w-fit animate-fade-in">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="flex gap-1 bg-muted p-1 rounded-xl mb-6 w-fit">
           {tabs.map(({ id, label, icon }) => (
             <button
               key={id}
@@ -97,301 +68,105 @@ export default function AdminPage() {
               <span className="hidden sm:inline">{label}</span>
             </button>
           ))}
-        </div>
+        </motion.div>
 
-        {/* Overview */}
-        {activeTab === 'overview' && (
-          <div className="space-y-6 animate-fade-up">
-            {/* KPI row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <KpiCard label="Total Pendapatan" value="$2.47M" sub="↑ 18.4% this quarter" icon="💰" trend="up" />
-              <KpiCard label="Active Listings" value={`${inventory.length - outOfStockCount}`} sub={`${outOfStockCount} out of stock`} icon="🏪" />
-              <KpiCard label="Monthly Orders" value="847" sub="↑ 12% vs last month" icon="📦" trend="up" />
-              <KpiCard label="Inventory Value" value={formatPrice(totalValue)} sub={`${inventory.length} SKUs tracked`} icon="🏗️" />
-            </div>
-
-            {/* Low stock alerts */}
-            {lowStockProducts.length > 0 && (
-              <div className="bg-warning-bg border border-warning/20 rounded-2xl p-5">
-                <div className="flex items-center gap-2 mb-4">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-warning"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
-                  <h3 className="font-semibold text-foreground text-sm">Stok Menipis Alerts ({lowStockProducts.length})</h3>
-                </div>
-                <div className="space-y-2">
-                  {lowStockProducts.map(p => {
-                    const cfg = stockConfig[p.stockStatus];
-                    return (
-                      <div key={p.id} className="flex items-center justify-between bg-card rounded-xl px-4 py-2.5">
-                        <div>
-                          <p className="font-semibold text-sm text-foreground">{p.productTitle}</p>
-                          <p className="text-xs text-muted-foreground font-mono">{p.sku}</p>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${cfg.bg} ${cfg.text}`}>{p.stockQuantity} units</span>
-                          <button onClick={() => { setActiveTab('inventory'); }} className="text-xs text-primary font-medium hover:underline">Restock →</button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Recent orders preview */}
-            <div className="bg-card border border-border rounded-2xl overflow-hidden">
-              <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-                <h3 className="font-display font-semibold text-base text-foreground">Pesanan Terbaru</h3>
-                <button onClick={() => setActiveTab('orders')} className="text-xs text-primary font-medium hover:underline">View all →</button>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full">
+        <AnimatePresence mode="wait">
+          {activeTab === 'komplain' && (
+            <motion.div key="komplain" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-4">
+              <h2 className="text-xl font-semibold mb-4">Daftar Komplain Pelanggan</h2>
+              <div className="bg-card border border-border rounded-2xl overflow-hidden">
+                <table className="w-full text-sm">
                   <thead className="bg-muted/50">
                     <tr>
-                      {['Order ID', 'Buyer', 'Items', 'Total', 'Status'].map(h => (
+                      {['ID', 'Tanggal', 'Pengguna', 'Masalah', 'Status', 'Aksi'].map(h => (
                         <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
-                    {MOCK_ORDERS.map(order => {
-                      const s = order.orderStatus;
-                      const badge = { processing: 'bg-info/10 text-info', confirmed: 'bg-primary/10 text-primary', shipped: 'bg-warning-bg text-warning', out_for_delivery: 'bg-accent/10 text-accent', delivered: 'bg-success-bg text-success' }[s];
-                      return (
-                        <tr key={order.orderId} className="border-t border-border hover:bg-muted/30 transition-colors">
-                          <td className="px-4 py-3 font-mono text-xs font-medium text-foreground">{order.orderId}</td>
-                          <td className="px-4 py-3 text-sm text-foreground">{order.shippingAddress.fullName}</td>
-                          <td className="px-4 py-3 text-sm text-muted-foreground">{order.items.length}</td>
-                          <td className="px-4 py-3 font-mono text-sm font-semibold">{formatPrice(order.totalJumlah)}</td>
-                          <td className="px-4 py-3">
-                            <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full ${badge} capitalize`}>
-                              {s.replace('_', ' ')}
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                    {complaints.map(c => (
+                      <tr key={c.id} className="border-t border-border hover:bg-muted/30">
+                        <td className="px-4 py-3 font-mono text-xs">{c.id}</td>
+                        <td className="px-4 py-3 text-xs text-muted-foreground">{c.date}</td>
+                        <td className="px-4 py-3 font-medium">{c.user}</td>
+                        <td className="px-4 py-3 text-muted-foreground">{c.issue}</td>
+                        <td className="px-4 py-3">
+                          <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full capitalize ${c.status === 'resolved' ? 'bg-success-bg text-success' : c.status === 'pending' ? 'bg-warning-bg text-warning' : 'bg-info/10 text-info'}`}>
+                            {c.status}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          {c.status !== 'resolved' && (
+                            <button onClick={() => handleResolveComplaint(c.id)} className="text-xs text-success font-medium hover:underline">Tandai Selesai</button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
-            </div>
-          </div>
-        )}
+            </motion.div>
+          )}
 
-        {/* Inventory Management */}
-        {activeTab === 'inventory' && (
-          <div className="animate-fade-up space-y-4">
-            {/* Search + actions */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="relative flex-1">
-                <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /></svg>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  placeholder="Search by name, SKU, or brand…"
-                  className="w-full pl-9 pr-4 py-2.5 bg-card border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                />
-              </div>
-              <button className="flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:bg-primary-hover transition-colors shrink-0">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                Add Listing
-              </button>
-            </div>
-
-            {/* Inventory table */}
-            <div className="bg-card border border-border rounded-2xl overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="bg-muted/50">
-                    <tr>
-                      {['Product', 'SKU', 'Category', 'Price', 'Stock', 'Status', 'Actions'].map(h => (
-                        <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredInventory.map(product => {
-                      const isEditing = editingId === product.id;
-                      const cfg = stockConfig[product.stockStatus];
-
-                      return (
-                        <tr key={product.id} className={`border-t border-border transition-colors ${isEditing ? 'bg-primary/5' : 'hover:bg-muted/30'}`}>
-                          {/* Product */}
-                          <td className="px-4 py-3">
-                            <div className="flex items-center gap-3">
-                              <img src={product.imageUrl} alt={product.productTitle} className="w-10 h-10 object-cover rounded-lg bg-muted shrink-0" />
-                              <div className="min-w-0">
-                                <p className="font-semibold text-foreground truncate max-w-[180px]">{product.productTitle}</p>
-                                <p className="text-xs text-muted-foreground">{product.brand}</p>
-                              </div>
-                            </div>
-                          </td>
-
-                          {/* SKU */}
-                          <td className="px-4 py-3">
-                            <span className="font-mono text-xs text-muted-foreground">{product.sku}</span>
-                          </td>
-
-                          {/* Category */}
-                          <td className="px-4 py-3">
-                            <span className="text-xs text-muted-foreground whitespace-nowrap">{product.category}</span>
-                          </td>
-
-                          {/* Price */}
-                          <td className="px-4 py-3">
-                            {isEditing ? (
-                              <div className="relative">
-                                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">$</span>
-                                <input
-                                  type="number"
-                                  value={editValues.itemPrice ?? product.itemPrice}
-                                  onChange={e => setEditValues(v => ({ ...v, itemPrice: Number(e.target.value) }))}
-                                  className="w-24 pl-5 pr-2 py-1 border border-primary rounded-lg font-mono text-xs bg-card focus:outline-none"
-                                />
-                              </div>
-                            ) : (
-                              <span className="font-mono font-semibold text-foreground">{formatPrice(product.itemPrice)}</span>
-                            )}
-                          </td>
-
-                          {/* Stock qty */}
-                          <td className="px-4 py-3">
-                            {isEditing ? (
-                              <input
-                                type="number"
-                                min="0"
-                                value={editValues.stockQuantity ?? product.stockQuantity}
-                                onChange={e => setEditValues(v => ({ ...v, stockQuantity: Number(e.target.value) }))}
-                                className="w-16 px-2 py-1 border border-primary rounded-lg font-mono text-xs text-center bg-card focus:outline-none"
-                              />
-                            ) : (
-                              <span className="font-mono text-sm font-medium">{product.stockQuantity}</span>
-                            )}
-                          </td>
-
-                          {/* Status */}
-                          <td className="px-4 py-3">
-                            <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full whitespace-nowrap ${cfg.bg} ${cfg.text}`}>
-                              {cfg.label}
-                            </span>
-                          </td>
-
-                          {/* Actions */}
-                          <td className="px-4 py-3">
-                            <div className="flex items-center gap-2">
-                              {isEditing ? (
-                                <>
-                                  <button
-                                    onClick={() => saveEdit(product.id)}
-                                    className="text-xs font-semibold text-success hover:underline"
-                                  >Save</button>
-                                  <button
-                                    onClick={() => setEditingId(null)}
-                                    className="text-xs font-semibold text-muted-foreground hover:underline"
-                                  >Cancel</button>
-                                </>
-                              ) : (
-                                <>
-                                  <button
-                                    onClick={() => startEdit(product)}
-                                    className="p-1.5 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-primary"
-                                    title="Edit"
-                                  >
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
-                                  </button>
-                                  <button
-                                    onClick={() => setInventory(inv => inv.filter(p => p.id !== product.id))}
-                                    className="p-1.5 rounded-lg hover:bg-error-bg transition-colors text-muted-foreground hover:text-error"
-                                    title="Delete"
-                                  >
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" /></svg>
-                                  </button>
-                                </>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-              <div className="px-5 py-3 border-t border-border bg-muted/30 flex justify-between text-xs text-muted-foreground">
-                <span>Showing {filteredInventory.length} of {inventory.length} products</span>
-                <span>Total inventory value: <strong className="text-foreground font-mono">{formatPrice(totalValue)}</strong></span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Orders management */}
-        {activeTab === 'orders' && (
-          <div className="animate-fade-up space-y-4">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              {[
-                { label: 'Total Orders', value: '847', icon: '📋' },
-                { label: 'Processing', value: '23', icon: '⏳' },
-                { label: 'Shipped', value: '156', icon: '🚚' },
-                { label: 'Delivered', value: '668', icon: '✅' },
-              ].map(({ label, value, icon }) => (
-                <div key={label} className="bg-card border border-border rounded-xl p-4">
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs text-muted-foreground font-medium">{label}</p>
-                    <span className="text-lg">{icon}</span>
+          {activeTab === 'penjual' && (
+            <motion.div key="penjual" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-4">
+              <h2 className="text-xl font-semibold mb-4">Manajemen Akun Penjual</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {sellers.map(s => (
+                  <div key={s.id} className="bg-card border border-border rounded-2xl p-5 flex flex-col justify-between">
+                    <div>
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="font-semibold text-lg">{s.name}</h3>
+                        <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${s.active ? 'bg-success-bg text-success' : 'bg-error-bg text-error'}`}>
+                          {s.active ? 'Aktif' : 'Banned'}
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-1">Rating: {s.rating} ⭐</p>
+                      <p className="text-sm text-muted-foreground">Komplain: <span className={s.complaints > 5 ? 'text-error font-semibold' : ''}>{s.complaints}</span></p>
+                    </div>
+                    <button
+                      onClick={() => handleBanSeller(s.id)}
+                      className={`mt-4 w-full py-2 rounded-lg text-sm font-semibold transition-all ${s.active ? 'bg-error/10 text-error hover:bg-error/20' : 'bg-success/10 text-success hover:bg-success/20'}`}
+                    >
+                      {s.active ? 'Nonaktifkan Akun' : 'Aktifkan Akun'}
+                    </button>
                   </div>
-                  <p className="font-display text-2xl font-semibold text-foreground mt-1">{value}</p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
 
-            <div className="bg-card border border-border rounded-2xl overflow-hidden">
-              <div className="px-5 py-4 border-b border-border flex items-center justify-between">
-                <h3 className="font-display font-semibold text-base text-foreground">All Orders</h3>
-                <button className="flex items-center gap-1.5 text-xs text-primary font-medium hover:underline">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
-                  Export CSV
-                </button>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="bg-muted/50">
-                    <tr>
-                      {['Order ID', 'Tanggal', 'Pelanggan', 'Items', 'Total', 'Status', 'Actions'].map(h => (
-                        <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {MOCK_ORDERS.map(order => {
-                      const s = order.orderStatus;
-                      const badge = { processing: 'bg-info/10 text-info', confirmed: 'bg-primary/10 text-primary', shipped: 'bg-warning-bg text-warning', out_for_delivery: 'bg-accent/10 text-accent', delivered: 'bg-success-bg text-success' }[s];
-                      return (
-                        <tr key={order.orderId} className="border-t border-border hover:bg-muted/30 transition-colors">
-                          <td className="px-4 py-3 font-mono text-xs font-medium text-foreground">{order.orderId}</td>
-                          <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{new Tanggal(order.orderTanggal).toLocaleTanggalString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
-                          <td className="px-4 py-3 font-medium text-foreground whitespace-nowrap">{order.shippingAddress.fullName}</td>
-                          <td className="px-4 py-3 text-muted-foreground">{order.items.length}</td>
-                          <td className="px-4 py-3 font-mono font-semibold">{formatPrice(order.totalJumlah)}</td>
-                          <td className="px-4 py-3">
-                            <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full whitespace-nowrap ${badge} capitalize`}>
-                              {s.replace('_', ' ')}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3">
-                            <div className="flex gap-2">
-                              <button className="text-xs text-primary font-medium hover:underline">View</button>
-                              <button className="text-xs text-muted-foreground font-medium hover:underline">Update</button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        )}
+          {activeTab === 'monitoring' && (
+            <motion.div key="monitoring" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-4">
+               <h2 className="text-xl font-semibold mb-4">Monitoring Sistem</h2>
+               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                 <div className="bg-card border border-border rounded-2xl p-5">
+                   <p className="text-sm text-muted-foreground font-medium">Pengguna Aktif</p>
+                   <p className="font-display text-3xl font-semibold text-primary mt-2">{MOCK_SYSTEM_STATS.activeUsers}</p>
+                 </div>
+                 <div className="bg-card border border-border rounded-2xl p-5">
+                   <p className="text-sm text-muted-foreground font-medium">CPU Usage</p>
+                   <p className="font-display text-3xl font-semibold text-info mt-2">{MOCK_SYSTEM_STATS.cpu}</p>
+                 </div>
+                 <div className="bg-card border border-border rounded-2xl p-5">
+                   <p className="text-sm text-muted-foreground font-medium">Memory Usage</p>
+                   <p className="font-display text-3xl font-semibold text-warning mt-2">{MOCK_SYSTEM_STATS.memory}</p>
+                 </div>
+                 <div className="bg-card border border-border rounded-2xl p-5">
+                   <p className="text-sm text-muted-foreground font-medium">System Uptime</p>
+                   <p className="font-display text-3xl font-semibold text-success mt-2">{MOCK_SYSTEM_STATS.uptime}</p>
+                 </div>
+               </div>
+               <div className="mt-8 bg-card border border-border rounded-2xl p-6 text-center">
+                 <h3 className="font-semibold text-lg mb-2">Pusat Bantuan</h3>
+                 <p className="text-sm text-muted-foreground mb-4">Sistem berjalan normal. Tidak ada tindakan yang diperlukan.</p>
+                 <button className="px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors">
+                   Hubungi Tim Teknis
+                 </button>
+               </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

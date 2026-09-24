@@ -8,7 +8,8 @@ interface LoginPageProps {
 }
 
 const DEMO_ACCOUNTS = [
-  { role: 'buyer' as UserRole, email: 'marcus@tillmanfarm.com', password: 'farm2024', name: 'Marcus Tillman' },
+  { role: 'pembeli' as UserRole, email: 'marcus@tillmanfarm.com', password: 'farm2024', name: 'Marcus Tillman' },
+  { role: 'penjual' as UserRole, email: 'seller@agroforge.com', password: 'seller2024', name: 'AgroForge Seller' },
   { role: 'admin' as UserRole, email: 'admin@agroforge.com', password: 'admin2024', name: 'Sarah Chen' },
 ];
 
@@ -18,7 +19,7 @@ export default function LoginPage({ onLogin, onNavigateRegister }: LoginPageProp
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<UserRole>('buyer');
+  const [selectedRole, setSelectedRole] = useState<UserRole>('pembeli');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -132,7 +133,7 @@ export default function LoginPage({ onLogin, onNavigateRegister }: LoginPageProp
 
           {/* Role selector */}
           <div className="flex gap-2 mt-6 p-1 bg-muted rounded-xl">
-            {(['buyer', 'admin'] as UserRole[]).map(role => (
+            {(['pembeli', 'penjual', 'admin'] as UserRole[]).map(role => (
               <button
                 key={role}
                 onClick={() => { setSelectedRole(role); useDemoAccount(role); }}
@@ -142,7 +143,7 @@ export default function LoginPage({ onLogin, onNavigateRegister }: LoginPageProp
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                {role === 'buyer' ? '👤 Buyer' : '🛡️ Admin'}
+                {role === 'pembeli' ? '👤 Pembeli' : role === 'penjual' ? '🏪 Penjual' : '🛡️ Admin'}
               </button>
             ))}
           </div>

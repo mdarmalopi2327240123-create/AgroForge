@@ -7,7 +7,7 @@ export type Page =
   | 'orders'
   | 'admin';
 
-export type UserRole = 'buyer' | 'admin';
+export type UserRole = 'pembeli' | 'penjual' | 'admin';
 export type StockStatus = 'in_stock' | 'low_stock' | 'out_of_stock';
 export type OrderStatus = 'processing' | 'confirmed' | 'shipped' | 'out_for_delivery' | 'delivered';
 

@@ -9,7 +9,7 @@ interface RegisterPageProps {
 
 export default function RegisterPage({ onLogin, onNavigateLogin }: RegisterPageProps) {
   const [step, setStep] = useState<1 | 2>(1);
-  const [role, setRole] = useState<UserRole>('buyer');
+  const [role, setRole] = useState<UserRole>('pembeli');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [farmName, setFarmName] = useState('');
@@ -75,8 +75,8 @@ export default function RegisterPage({ onLogin, onNavigateLogin }: RegisterPageP
                 <label className="block text-sm font-medium text-foreground mb-2">I want to…</label>
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { role: 'buyer' as UserRole, label: 'Buy Equipment', desc: 'Browse & purchase', icon: '🚜' },
-                    { role: 'admin' as UserRole, label: 'Sell & Manage', desc: 'List & fulfill orders', icon: '📦' },
+                    { role: 'pembeli' as UserRole, label: 'Buy Equipment', desc: 'Browse & purchase', icon: '🚜' },
+                    { role: 'penjual' as UserRole, label: 'Sell & Manage', desc: 'List & fulfill orders', icon: '📦' },
                   ].map(({ role: r, label, desc, icon }) => (
                     <button
                       key={r}
